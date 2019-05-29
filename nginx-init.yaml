@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: init-demo
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    ports:
+    - containerPort: 80
+    volumeMounts:
+    - name: myvol
+      mountPath: /usr/share/nginx/html
+  initContainers:
+  - name: install
+    image: busybox
+    command:
+    - wget
+    - "-O"
+    - "/mydir/index.html"
+    - http://kubernetes.io
+    volumeMounts:
+    - name: myvol
+      mountPath: "/mydir"
+  dnsPolicy: Default
+  volumes:
+  - name: myvol
+    persistentVolumeClaim:
+      claimName: pvclaim
